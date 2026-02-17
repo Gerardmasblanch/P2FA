@@ -27,37 +27,14 @@
 [v ___lmul __lmul `(ul  1 e 4 0 ]
 "91 C:\Program Files\microchip\xc8\v2.46\pic\sources\c99\common\Umul64.c
 [v ___omul __omul `(uo  1 e 8 0 ]
-"11 C:\Users\gerim\Desktop\P2FA\main.c
+"11 C:\Users\gerim\Desktop\P2FA_github\P2FA\main.c
 [v _main main `(v  1 e 1 0 ]
-"23 C:\Users\gerim\Desktop\P2FA\TAD_SERIE.C
-[v _Send_char_ok Send_char_ok `(uc  1 e 1 0 ]
-"44 C:\Users\gerim\Desktop\P2FA\TAD_TIMER.C
+"44 C:\Users\gerim\Desktop\P2FA_github\P2FA\TAD_TIMER.C
 [v _TI_NewTimer TI_NewTimer `(uc  1 e 1 0 ]
 "55
 [v _TI_ResetTics TI_ResetTics `(v  1 e 1 0 ]
 "60
 [v _TI_GetTics TI_GetTics `(ul  1 e 4 0 ]
-[s S349 . 1 `uc 1 LATB0 1 0 :1:0 
-`uc 1 LATB1 1 0 :1:1 
-`uc 1 LATB2 1 0 :1:2 
-`uc 1 LATB3 1 0 :1:3 
-`uc 1 LATB4 1 0 :1:4 
-`uc 1 LATB5 1 0 :1:5 
-`uc 1 LATB6 1 0 :1:6 
-`uc 1 LATB7 1 0 :1:7 
-]
-"1127 C:\Program Files\microchip\xc8\v2.46\pic\include\proc\pic18f4321.h
-[s S358 . 1 `uc 1 LB0 1 0 :1:0 
-`uc 1 LB1 1 0 :1:1 
-`uc 1 LB2 1 0 :1:2 
-`uc 1 LB3 1 0 :1:3 
-`uc 1 LB4 1 0 :1:4 
-`uc 1 LB5 1 0 :1:5 
-`uc 1 LB6 1 0 :1:6 
-`uc 1 LB7 1 0 :1:7 
-]
-[u S367 . 1 `S349 1 . 1 0 `S358 1 . 1 0 ]
-[v _LATBbits LATBbits `VES367  1 e 1 @3978 ]
 [s S113 . 1 `uc 1 TRISC0 1 0 :1:0 
 `uc 1 TRISC1 1 0 :1:1 
 `uc 1 TRISC2 1 0 :1:2 
@@ -67,7 +44,7 @@
 `uc 1 TRISC6 1 0 :1:6 
 `uc 1 TRISC7 1 0 :1:7 
 ]
-"1964
+"1962 C:\Users\gerim\Desktop\P2FA_github\P2FA/pic18f4321.h
 [s S122 . 1 `uc 1 RC0 1 0 :1:0 
 `uc 1 RC1 1 0 :1:1 
 `uc 1 RC2 1 0 :1:2 
@@ -79,6 +56,22 @@
 ]
 [u S131 . 1 `S113 1 . 1 0 `S122 1 . 1 0 ]
 [v _TRISCbits TRISCbits `VES131  1 e 1 @3988 ]
+[s S306 . 1 `uc 1 TMR1IF 1 0 :1:0 
+`uc 1 TMR2IF 1 0 :1:1 
+`uc 1 CCP1IF 1 0 :1:2 
+`uc 1 SSPIF 1 0 :1:3 
+`uc 1 TXIF 1 0 :1:4 
+`uc 1 RCIF 1 0 :1:5 
+`uc 1 ADIF 1 0 :1:6 
+`uc 1 PSPIF 1 0 :1:7 
+]
+"2702
+[s S315 . 1 `uc 1 . 1 0 :4:0 
+`uc 1 TX1IF 1 0 :1:4 
+`uc 1 RC1IF 1 0 :1:5 
+]
+[u S319 . 1 `S306 1 . 1 0 `S315 1 . 1 0 ]
+[v _PIR1bits PIR1bits `VES319  1 e 1 @3998 ]
 [s S252 . 1 `uc 1 RX9D 1 0 :1:0 
 `uc 1 OERR 1 0 :1:1 
 `uc 1 FERR 1 0 :1:2 
@@ -88,7 +81,7 @@
 `uc 1 RX9 1 0 :1:6 
 `uc 1 SPEN 1 0 :1:7 
 ]
-"3162
+"3160
 [s S261 . 1 `uc 1 . 1 0 :3:0 
 `uc 1 ADEN 1 0 :1:3 
 ]
@@ -114,7 +107,7 @@
 `uc 1 TX9 1 0 :1:6 
 `uc 1 CSRC 1 0 :1:7 
 ]
-"3370
+"3368
 [s S162 . 1 `uc 1 TX9D1 1 0 :1:0 
 `uc 1 TRMT1 1 0 :1:1 
 `uc 1 BRGH1 1 0 :1:2 
@@ -131,9 +124,11 @@
 ]
 [u S176 . 1 `S153 1 . 1 0 `S162 1 . 1 0 `S171 1 . 1 0 `S174 1 . 1 0 ]
 [v _TXSTAbits TXSTAbits `VES176  1 e 1 @4012 ]
-"3587
+"3585
 [v _TXREG TXREG `VEuc  1 e 1 @4013 ]
-"3611
+"3597
+[v _RCREG RCREG `VEuc  1 e 1 @4014 ]
+"3609
 [v _SPBRG SPBRG `VEuc  1 e 1 @4015 ]
 [s S205 . 1 `uc 1 ABDEN 1 0 :1:0 
 `uc 1 WUE 1 0 :1:1 
@@ -144,7 +139,7 @@
 `uc 1 RCIDL 1 0 :1:6 
 `uc 1 ABDOVF 1 0 :1:7 
 ]
-"4188
+"4186
 [s S214 . 1 `uc 1 . 1 0 :4:0 
 `uc 1 SCKP 1 0 :1:4 
 `uc 1 . 1 0 :1:5 
@@ -158,6 +153,27 @@
 ]
 [u S225 . 1 `S205 1 . 1 0 `S214 1 . 1 0 `S219 1 . 1 0 `S222 1 . 1 0 ]
 [v _BAUDCONbits BAUDCONbits `VES225  1 e 1 @4024 ]
+[s S400 . 1 `uc 1 LATB0 1 0 :1:0 
+`uc 1 LATB1 1 0 :1:1 
+`uc 1 LATB2 1 0 :1:2 
+`uc 1 LATB3 1 0 :1:3 
+`uc 1 LATB4 1 0 :1:4 
+`uc 1 LATB5 1 0 :1:5 
+`uc 1 LATB6 1 0 :1:6 
+`uc 1 LATB7 1 0 :1:7 
+]
+"1127 C:\Program Files\microchip\xc8\v2.46\pic\include\proc\pic18f4321.h
+[s S409 . 1 `uc 1 LB0 1 0 :1:0 
+`uc 1 LB1 1 0 :1:1 
+`uc 1 LB2 1 0 :1:2 
+`uc 1 LB3 1 0 :1:3 
+`uc 1 LB4 1 0 :1:4 
+`uc 1 LB5 1 0 :1:5 
+`uc 1 LB6 1 0 :1:6 
+`uc 1 LB7 1 0 :1:7 
+]
+[u S418 . 1 `S400 1 . 1 0 `S409 1 . 1 0 ]
+[v _LATBbits LATBbits `VES418  1 e 1 @3978 ]
 "6183
 [v _T0CON T0CON `VEuc  1 e 1 @4053 ]
 "6260
@@ -189,7 +205,23 @@
 [v _INTCONbits INTCONbits `VES52  1 e 1 @4082 ]
 "8513
 [v _TMR0IF TMR0IF `VEb  1 e 0 @32658 ]
-"16 C:\Users\gerim\Desktop\P2FA\TAD_SPEAKER.C
+"7 C:\Users\gerim\Desktop\P2FA_github\P2FA\TAD_SERIE.C
+[v _estat_tx estat_tx `uc  1 s 1 estat_tx ]
+"8
+[v _ptr_tx ptr_tx `*.39Cuc  1 s 2 ptr_tx ]
+"9
+[v _idx_tx idx_tx `uc  1 s 1 idx_tx ]
+"12
+[v _estat_rx estat_rx `uc  1 s 1 estat_rx ]
+"13
+[v _buffer_rx buffer_rx `[10]uc  1 s 10 buffer_rx ]
+"14
+[v _idx_rx idx_rx `uc  1 s 1 idx_rx ]
+"15
+[v _max_caracters max_caracters `uc  1 s 1 max_caracters ]
+"17
+[v _flag_dades_llestes flag_dades_llestes `uc  1 s 1 flag_dades_llestes ]
+"16 C:\Users\gerim\Desktop\P2FA_github\P2FA\TAD_SPEAKER.C
 [v _estat_spk estat_spk `uc  1 s 1 estat_spk ]
 "17
 [v _hTimer hTimer `uc  1 s 1 hTimer ]
@@ -200,11 +232,11 @@
 "20
 [v _proxima_commuta proxima_commuta `ul  1 s 4 proxima_commuta ]
 [s S24 Timer 5 `ul 1 TicsInicials 4 0 `uc 1 Busy 1 4 ]
-"22 C:\Users\gerim\Desktop\P2FA\TAD_TIMER.C
+"22 C:\Users\gerim\Desktop\P2FA_github\P2FA\TAD_TIMER.C
 [v _Timers Timers `[4]S24  1 s 20 Timers ]
 "24
 [v _Tics Tics `VEul  1 s 4 Tics ]
-"11 C:\Users\gerim\Desktop\P2FA\main.c
+"11 C:\Users\gerim\Desktop\P2FA_github\P2FA\main.c
 [v _main main `(v  1 e 1 0 ]
 {
 "20

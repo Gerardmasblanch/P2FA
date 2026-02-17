@@ -1,5 +1,5 @@
 __S0 220 0 ABS 0
-__S1 24 0 ABS 0
+__S1 36 0 ABS 0
 __S4 0 0 ABS 0
 __S5 0 0 ABS 0
 __Hintentry 0 0 ABS 0
@@ -9,6 +9,7 @@ _main 218 0 CODE 0
 _Tics 1D 0 COMRAM 1
 ___sp 0 0 STACK 2
 start 0 0 CODE 0
+_RCREG FAE 0 ABS 0
 _TXREG FAD 0 ABS 0
 _SPBRG FAF 0 ABS 0
 __Hirdata 0 0 CODE 0
@@ -39,6 +40,7 @@ __Hbigsfr 0 0 ABS 0
 __Lbigsfr 0 0 ABS 0
 __Heeprom_data 0 0 EEDATA 0
 __Leeprom_data 0 0 EEDATA 0
+_PIR1bits F9E 0 ABS 0
 _LATBbits F8A 0 ABS 0
 __Hintsave_regs 0 0 BIGRAM 1
 __Lintsave_regs 0 0 BIGRAM 1
@@ -67,6 +69,8 @@ isa$xinst 0 0 ABS 0
 __HnvFARRAM 0 0 FARRAM 0
 __LnvFARRAM 0 0 FARRAM 0
 ___heap_hi 0 0 ABS 0
+_estat_rx 28 0 COMRAM 1
+_estat_tx 2A 0 COMRAM 1
 __Hsivt_hi 0 0 CODE 0
 __Lsivt_hi 0 0 CODE 0
 __Hdata 0 0 ABS 0
@@ -75,7 +79,7 @@ isa$std 1 0 ABS 0
 stackhi 0 0 ABS 0
 __Hheap 0 0 HEAP 7
 __Lheap 0 0 HEAP 7
-_hTimer 23 0 COMRAM 1
+_hTimer 35 0 COMRAM 1
 __Htemp 0 0 COMRAM 1
 __Ltemp 0 0 COMRAM 1
 stacklo 0 0 ABS 0
@@ -91,11 +95,14 @@ __Lrbss 0 0 COMRAM 1
 _Timers 1 0 COMRAM 1
 __Htext 0 0 ABS 0
 __Ltext 0 0 ABS 0
+_idx_rx 27 0 COMRAM 1
+_idx_tx 29 0 COMRAM 1
+_ptr_tx 21 0 COMRAM 1
 ___heap_lo 0 0 ABS 0
 end_of_initialization 20E 0 CODE 0
 __Hsivt_lo 0 0 CODE 0
 __Lsivt_lo 0 0 CODE 0
-_estat_spk 22 0 COMRAM 1
+_estat_spk 24 0 COMRAM 1
 _proxima_commuta 15 0 COMRAM 1
 _durada_tics 19 0 COMRAM 1
 _RCSTAbits FAB 0 ABS 0
@@ -115,6 +122,8 @@ __Htext0 0 0 ABS 0
 __Ltext0 0 0 ABS 0
 __ptext0 218 0 CODE 0
 ___stack_hi 0 0 STACK 2
+_buffer_rx 2B 0 COMRAM 1
+_flag_dades_llestes 25 0 COMRAM 1
 __HbssCOMRAM 0 0 ABS 0
 __LbssCOMRAM 0 0 ABS 0
 __pbssCOMRAM 1 0 COMRAM 1
@@ -140,7 +149,8 @@ __HcstackCOMRAM 0 0 ABS 0
 __Lspace_0 0 0 ABS 0
 __LcstackCOMRAM 0 0 ABS 0
 __pcstackCOMRAM 0 0 COMRAM 1
-__Hspace_1 24 0 ABS 0
+_max_caracters 26 0 COMRAM 1
+__Hspace_1 36 0 ABS 0
 __Lspace_1 0 0 ABS 0
 __Hsmallconst 202 0 SMALLCONST 0
 __Lsmallconst 200 0 SMALLCONST 0
@@ -175,31 +185,31 @@ intlevel3 0 0 CODE 0
 ___inthi_stack_lo 0 0 STACK 2
 start_initialization 202 0 CODE 0
 ___intlo_stack_lo 0 0 STACK 2
-_tics_toggle 21 0 COMRAM 1
+_tics_toggle 23 0 COMRAM 1
 __initialization 202 0 CODE 0
 __activetblptr 2 0 ABS 0
 %segments
 reset_vec 0 3 CODE 0 0
 smallconst 200 201 SMALLCONST 200 0
-bssCOMRAM 1 23 COMRAM 1 1
+bssCOMRAM 1 35 COMRAM 1 1
 cinit 202 21F CODE 202 0
 %locals
 dist/default/production\P2FA.production.o
-C:\Users\gerim\AppData\Local\Temp\xcAsths.\driver_tmp_1.s
-1253 202 0 CODE 0
-1255 202 0 CODE 0
-1258 202 0 CODE 0
-1281 202 0 CODE 0
-1282 206 0 CODE 0
-1283 208 0 CODE 0
-1284 208 0 CODE 0
-1285 20A 0 CODE 0
-1286 20C 0 CODE 0
-1292 20E 0 CODE 0
-1295 20E 0 CODE 0
-1296 210 0 CODE 0
-1297 212 0 CODE 0
-1298 214 0 CODE 0
+C:\Users\gerim\AppData\Local\Temp\xcAsdo0.\driver_tmp_1.s
+1265 202 0 CODE 0
+1267 202 0 CODE 0
+1270 202 0 CODE 0
+1309 202 0 CODE 0
+1310 206 0 CODE 0
+1311 208 0 CODE 0
+1312 208 0 CODE 0
+1313 20A 0 CODE 0
+1314 20C 0 CODE 0
+1320 20E 0 CODE 0
+1323 20E 0 CODE 0
+1324 210 0 CODE 0
+1325 212 0 CODE 0
+1326 214 0 CODE 0
 main.c
 11 218 0 CODE 0
 13 218 0 CODE 0

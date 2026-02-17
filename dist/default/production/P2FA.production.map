@@ -6,10 +6,10 @@ Linker command line:
   --edf=C:\Program Files\microchip\xc8\v2.46\pic\dat\20240104201356_en.msgs \
   -cn -h+dist/default/production\P2FA.production.sym \
   --cmf=dist/default/production\P2FA.production.cmf -z -Q18F4321 \
-  -oC:\Users\gerim\AppData\Local\Temp\xcAsths.\driver_tmp_3.o \
+  -oC:\Users\gerim\AppData\Local\Temp\xcAsdo0.\driver_tmp_3.o \
   --defsym=__MPLAB_BUILD=1 --fixupoverflow=error \
   -Mdist/default/production/P2FA.production.map \
-  --md=C:\Users\gerim\AppData\Local\Temp\xcAsths.\driver_tmp_0.dat -E1 \
+  --md=C:\Users\gerim\AppData\Local\Temp\xcAsdo0.\driver_tmp_0.dat -E1 \
   -ver=XC8 Compiler --acfsm=1493 -ACODE=00h-01FFFh -ACONST=00h-01FFFh \
   -ASMALLCONST=0200h-02FFhx30 -AMEDIUMCONST=0200h-01FFFh -ACOMRAM=01h-07Fh \
   -AABS1=00h-01FFh -ABIGRAM=01h-01FFh -ARAM=080h-0FFh,0100h-01FFh \
@@ -23,7 +23,7 @@ Linker command line:
   -pfarbss=FARRAM,fardata=FARRAM,nvFARRAM=FARRAM \
   -pintsave_regs=BIGRAM,bigbss=BIGRAM,bigdata=BIGRAM -pbss=RAM \
   -pidata=CODE,irdata=CODE,ibigdata=CODE,ifardata=CODE -prparam=COMRAM \
-  C:\Users\gerim\AppData\Local\Temp\xcAsths.\driver_tmp_9.o \
+  C:\Users\gerim\AppData\Local\Temp\xcAsdo0.\driver_tmp_9.o \
   dist/default/production\P2FA.production.o 
 
 Object code version is 3.11
@@ -33,7 +33,7 @@ Machine type is 18F4321
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-C:\Users\gerim\AppData\Local\Temp\xcAsths.\driver_tmp_9.o
+C:\Users\gerim\AppData\Local\Temp\xcAsdo0.\driver_tmp_9.o
                 idloc                            200000   200000        8        0       5
                 config                           300000   300000        E        0       4
                 init                                  0        0        4        0       0
@@ -42,7 +42,7 @@ dist/default/production\P2FA.production.o
                 config                           300000   300000        E        0       4
                 smallconst                          200      200        2      100       0
                 text0                               218      218        8      101       0
-                bssCOMRAM                             1        1       23        1       1
+                bssCOMRAM                             1        1       35        1       1
                 cinit                               202      202       16      101       0
 
 TOTAL           Name                               Link     Load   Length     Space
@@ -59,7 +59,7 @@ TOTAL           Name                               Link     Load   Length     Sp
         CLASS   MEDIUMCONST    
 
         CLASS   COMRAM         
-                bssCOMRAM                             1        1       23         1
+                bssCOMRAM                             1        1       35         1
 
         CLASS   ABS1           
 
@@ -94,7 +94,7 @@ TOTAL           Name                               Link     Load   Length     Sp
 SEGMENTS        Name                           Load    Length   Top    Selector   Space  Class
 
                 reset_vec                      000000  000004  000004         0       0  CODE    
-                bssCOMRAM                      000001  000023  000024         1       1  COMRAM  
+                bssCOMRAM                      000001  000035  000036         1       1  COMRAM  
                 smallconst                     000200  000002  000202       100       0  SMALLCON
                 cinit                          000202  00001E  000220       101       0  CODE    
 
@@ -104,11 +104,11 @@ UNUSED ADDRESS RANGES
         Name                Unused          Largest block    Delta
         BANK0            000080-0000FF               80
         BANK1            000100-0001FF              100
-        BIGRAM           000024-0001FF              1DC
+        BIGRAM           000036-0001FF              1CA
         BIGSFR           000F80-000FFF               80
         CODE             000004-0001FF              1FC
                          000220-001FFF             1DE0
-        COMRAM           000024-00007F               5C
+        COMRAM           000036-00007F               4A
         CONST            000004-0001FF              1FC
                          000220-001FFF             1DE0
         EEDATA           F00000-F000FF              100
@@ -122,6 +122,8 @@ UNUSED ADDRESS RANGES
 _BAUDCONbits             (abs)        000FB8
 _INTCONbits              (abs)        000FF2
 _LATBbits                (abs)        000F8A
+_PIR1bits                (abs)        000F9E
+_RCREG                   (abs)        000FAE
 _RCSTAbits               (abs)        000FAB
 _SPBRG                   (abs)        000FAF
 _T0CON                   (abs)        000FD5
@@ -184,7 +186,7 @@ __Hsivt_hi               sivt_hi      000000
 __Hsivt_lo               sivt_lo      000000
 __Hsmallconst            smallconst   000202
 __Hspace_0               (abs)        000220
-__Hspace_1               (abs)        000024
+__Hspace_1               (abs)        000036
 __Hspace_2               (abs)        000000
 __Hspace_4               (abs)        60000E
 __Hstack                 stack        000000
@@ -253,7 +255,7 @@ __Ltemp                  temp         000000
 __Ltext                  text         000000
 __Ltext0                 text0        000000
 __S0                     (abs)        000220
-__S1                     (abs)        000024
+__S1                     (abs)        000036
 __S4                     (abs)        000000
 __S5                     (abs)        000000
 ___heap_hi               (abs)        000000
@@ -282,12 +284,20 @@ __psmallconst            smallconst   000200
 __ptext0                 text0        000218
 __ramtop                 ramtop       000200
 __smallconst             smallconst   000200
+_buffer_rx               bssCOMRAM    00002B
 _durada_tics             bssCOMRAM    000019
-_estat_spk               bssCOMRAM    000022
-_hTimer                  bssCOMRAM    000023
+_estat_rx                bssCOMRAM    000028
+_estat_spk               bssCOMRAM    000024
+_estat_tx                bssCOMRAM    00002A
+_flag_dades_llestes      bssCOMRAM    000025
+_hTimer                  bssCOMRAM    000035
+_idx_rx                  bssCOMRAM    000027
+_idx_tx                  bssCOMRAM    000029
 _main                    text0        000218
+_max_caracters           bssCOMRAM    000026
 _proxima_commuta         bssCOMRAM    000015
-_tics_toggle             bssCOMRAM    000021
+_ptr_tx                  bssCOMRAM    000021
+_tics_toggle             bssCOMRAM    000023
 end_of_initialization    cinit        00020E
 intlevel0                text         000000
 intlevel1                text         000000

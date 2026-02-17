@@ -19,6 +19,10 @@
       <itemPath>TAD_SERIE.C</itemPath>
       <itemPath>TAD_SPEAKER.C</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>TAD_EXITREQUEST.C</itemPath>
+      <itemPath>TAD_EXITREQUEST.H</itemPath>
+      <itemPath>TAD_LEDS.C</itemPath>
+      <itemPath>TAD_LEDS.H</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

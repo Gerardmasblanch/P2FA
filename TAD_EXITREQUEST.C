@@ -9,8 +9,8 @@
 static unsigned char estat = 0;
 static unsigned char ElTimer;
 
-void Pols_Includeç(){
-    TRISBbits.TRSIB0 = 1;
+void Pols_Init(){
+    TRISBbits.TRISB0 = 1;
     INTCON2bits.RBPU = 0;
     TI_NewTimer(&ElTimer);
 }

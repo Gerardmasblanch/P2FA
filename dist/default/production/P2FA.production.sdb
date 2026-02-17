@@ -153,6 +153,41 @@
 ]
 [u S225 . 1 `S205 1 . 1 0 `S214 1 . 1 0 `S219 1 . 1 0 `S222 1 . 1 0 ]
 [v _BAUDCONbits BAUDCONbits `VES225  1 e 1 @4024 ]
+[s S476 . 1 `uc 1 RB0 1 0 :1:0 
+`uc 1 RB1 1 0 :1:1 
+`uc 1 RB2 1 0 :1:2 
+`uc 1 RB3 1 0 :1:3 
+`uc 1 RB4 1 0 :1:4 
+`uc 1 RB5 1 0 :1:5 
+`uc 1 RB6 1 0 :1:6 
+`uc 1 RB7 1 0 :1:7 
+]
+"328 C:\Program Files\microchip\xc8\v2.46\pic\include\proc\pic18f4321.h
+[s S552 . 1 `uc 1 INT0 1 0 :1:0 
+`uc 1 INT1 1 0 :1:1 
+`uc 1 INT2 1 0 :1:2 
+`uc 1 CCP2 1 0 :1:3 
+`uc 1 KBI0 1 0 :1:4 
+`uc 1 KBI1 1 0 :1:5 
+`uc 1 KBI2 1 0 :1:6 
+`uc 1 KBI3 1 0 :1:7 
+]
+[s S561 . 1 `uc 1 AN12 1 0 :1:0 
+`uc 1 AN10 1 0 :1:1 
+`uc 1 AN8 1 0 :1:2 
+`uc 1 AN9 1 0 :1:3 
+`uc 1 AN11 1 0 :1:4 
+`uc 1 PGM 1 0 :1:5 
+`uc 1 PGC 1 0 :1:6 
+`uc 1 PGD 1 0 :1:7 
+]
+[s S570 . 1 `uc 1 FLT0 1 0 :1:0 
+]
+[s S572 . 1 `uc 1 . 1 0 :3:0 
+`uc 1 CCP2_PA2 1 0 :1:3 
+]
+[u S575 . 1 `S476 1 . 1 0 `S552 1 . 1 0 `S561 1 . 1 0 `S570 1 . 1 0 `S572 1 . 1 0 ]
+[v _PORTBbits PORTBbits `VES575  1 e 1 @3969 ]
 [s S400 . 1 `uc 1 LATB0 1 0 :1:0 
 `uc 1 LATB1 1 0 :1:1 
 `uc 1 LATB2 1 0 :1:2 
@@ -162,7 +197,7 @@
 `uc 1 LATB6 1 0 :1:6 
 `uc 1 LATB7 1 0 :1:7 
 ]
-"1127 C:\Program Files\microchip\xc8\v2.46\pic\include\proc\pic18f4321.h
+"1127
 [s S409 . 1 `uc 1 LB0 1 0 :1:0 
 `uc 1 LB1 1 0 :1:1 
 `uc 1 LB2 1 0 :1:2 
@@ -174,10 +209,40 @@
 ]
 [u S418 . 1 `S400 1 . 1 0 `S409 1 . 1 0 ]
 [v _LATBbits LATBbits `VES418  1 e 1 @3978 ]
+[s S467 . 1 `uc 1 TRISB0 1 0 :1:0 
+`uc 1 TRISB1 1 0 :1:1 
+`uc 1 TRISB2 1 0 :1:2 
+`uc 1 TRISB3 1 0 :1:3 
+`uc 1 TRISB4 1 0 :1:4 
+`uc 1 TRISB5 1 0 :1:5 
+`uc 1 TRISB6 1 0 :1:6 
+`uc 1 TRISB7 1 0 :1:7 
+]
+"1742
+[u S485 . 1 `S467 1 . 1 0 `S476 1 . 1 0 ]
+[v _TRISBbits TRISBbits `VES485  1 e 1 @3987 ]
 "6183
 [v _T0CON T0CON `VEuc  1 e 1 @4053 ]
 "6260
 [v _TMR0 TMR0 `VEus  1 e 2 @4054 ]
+[s S507 . 1 `uc 1 . 1 0 :7:0 
+`uc 1 NOT_RBPU 1 0 :1:7 
+]
+"6656
+[s S510 . 1 `uc 1 RBIP 1 0 :1:0 
+`uc 1 . 1 0 :1:1 
+`uc 1 TMR0IP 1 0 :1:2 
+`uc 1 . 1 0 :1:3 
+`uc 1 INTEDG2 1 0 :1:4 
+`uc 1 INTEDG1 1 0 :1:5 
+`uc 1 INTEDG0 1 0 :1:6 
+`uc 1 nRBPU 1 0 :1:7 
+]
+[s S519 . 1 `uc 1 . 1 0 :7:0 
+`uc 1 RBPU 1 0 :1:7 
+]
+[u S522 . 1 `S507 1 . 1 0 `S510 1 . 1 0 `S519 1 . 1 0 ]
+[v _INTCON2bits INTCON2bits `VES522  1 e 1 @4081 ]
 [s S30 . 1 `uc 1 RBIF 1 0 :1:0 
 `uc 1 INT0IF 1 0 :1:1 
 `uc 1 TMR0IF 1 0 :1:2 
@@ -205,6 +270,10 @@
 [v _INTCONbits INTCONbits `VES52  1 e 1 @4082 ]
 "8513
 [v _TMR0IF TMR0IF `VEb  1 e 0 @32658 ]
+"9 C:\Users\gerim\Desktop\P2FA_github\P2FA\TAD_EXITREQUEST.C
+[v _estat estat `uc  1 s 1 estat ]
+"10
+[v _ElTimer ElTimer `uc  1 s 1 ElTimer ]
 "7 C:\Users\gerim\Desktop\P2FA_github\P2FA\TAD_SERIE.C
 [v _estat_tx estat_tx `uc  1 s 1 estat_tx ]
 "8

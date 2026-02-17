@@ -13,7 +13,7 @@
 #define MSG_CLOSE_INT   "> Close interior door\r\n"
 #define MSG_DENIED      "> Permission Denied\r\n"
 #define MSG_THIEF       "> THIEF INTERCEPTED!\r\n"
-#define MSG_RESET       "> Reset System? (Y/N): "
+#define MSG_RESET       "> Reset System? "
 #define MSG_EXIT_REQ    "> Exit Requested\r\n"
 
 // --- FUNCIONS PÚBLIQUES ---

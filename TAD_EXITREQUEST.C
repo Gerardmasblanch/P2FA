@@ -7,10 +7,11 @@
 #define POLSADOR_PREMUT 0
 
 static unsigned char estat = 0;
+static unsigned char pols = 0;
 static unsigned char ElTimer;
 
 void Pols_Init(){
-    TRISBbits.TRISB0 = 1;
+    TRISBbits.TRSIB0 = 1;
     INTCON2bits.RBPU = 0;
     TI_NewTimer(&ElTimer);
 }
@@ -42,6 +43,7 @@ void Pols_motor(){
             if(TI_GetTics(ElTimer) >= 5) {
                 // avisar a controler que s'ha premut EXIT REQUEST 
                 estat = 0;
+                pols = 1; // variable que controller mirara si s'activa per saber q sha clicat boto
             } 
     }
 }

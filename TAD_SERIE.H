@@ -1,11 +1,11 @@
 #ifndef TAD_SERIE_H
 #define TAD_SERIE_H
 
-#include <xc.h>
 
 // --- DEFINICIÓ DE MISSATGES (LOGS) ---
 // Pots afegir o modificar aquests missatges segons l'enunciat
-#define MSG_HELLO       "\r\n> LSBank - New Day!\r\n"
+
+#define MSG_HELLO       "> LSBank - New Day!\r\n"
 #define MSG_ASK_PIN     "> Enter PIN: "
 #define MSG_OPEN_EXT    "> Open exterior door\r\n"
 #define MSG_CLOSE_EXT   "> Close exterior door\r\n"
@@ -15,26 +15,36 @@
 #define MSG_THIEF       "> THIEF INTERCEPTED!\r\n"
 #define MSG_RESET       "> Reset System? "
 #define MSG_EXIT_REQ    "> Exit Requested\r\n"
+#define FALS 0
+#define CERT 1
 
-// --- FUNCIONS PÚBLIQUES ---
 
-// Inicialitza el hardware EUSART (9600 baud, etc.)
-void SERIAL_Init(void);
 
-// El motor que s'ha de cridar al while(1)
-void SERIAL_Motor(void);
+void SIO_Init(void);
 
-// Envia una cadena de caràcters (logs) de forma cooperativa
-void SERIAL_EnviarLog(const char *msg);
+void SIO_Motor(void);
 
-// Activa la recepció de caràcters. 
-// 'quants' defineix el límit (ex: 4 per al PIN, 1 per al Yes/No)
-void SERIAL_ActivarRecepcio(unsigned char quants);
+void SIO_EnviarLog(const char* log);
 
-// Retorna 1 si el buffer ja té la informació completa (PIN o caràcter de reset)
-unsigned char SERIAL_DadesLlestes(void);
+void SIO_modeResponse(void);
 
-// Retorna el punter a la memòria on s'ha guardat el PIN/caràcter
-char* SERIAL_GetBuffer(void);
+unsigned char SIO_dadesLlestes(void);
+
+unsigned char *SIO_getResponse(void);
+//pre: haver cridat a SIO_modeResponse() per posar el mode de espera de resposta del usuario,
+// i haver rebut una resposta del usuario per SIO_RXAvail() i SIO_GetChar() que s'ha d'anar guardant 
+//a receivedResponse fins que es rebi un enter o un altre caràcter que indiqui el final de la resposta,
+// com un salt de línia o similar. Aquesta funció retorna un punter a receivedResponse, 
+//on es pot accedir a la resposta completa rebuda del usuario.
+
+unsigned char SIO_RXAvail(void);
+
+unsigned char SIO_GetChar(void);
+
+unsigned char SIO_TXAvail(void);
+
+void SIO_PutChar(unsigned char val);
+
+void SIO_Close(void);
 
 #endif

@@ -3,101 +3,114 @@
 #include "TAD_SERIE.H"
 #include <xc.h>
 
-// Estats de Transmissió (TX): 0 = Repòs, 1 = Enviant
-static unsigned char estat_tx = 0;
-static const char *ptr_tx = 0;
-static unsigned char idx_tx = 0;
+#define CONFIGURACIO_TXSTA 0x24
+#define CONFIGURACIO_RCSTA 0x90
+#define DIVISOR_BAUDRATE 64
 
-// Estats de Recepció (RX): 0 = Repòs (Sord), 1 = Escoltant
-static unsigned char estat_rx = 0;
-static char buffer_rx[10];
-static unsigned char idx_rx = 0;
-static unsigned char max_caracters = 0;
+unsigned char i = 0;
+unsigned char mode = 0;
+unsigned char receivedResponse[10]; // Variable para almacenar la respuesta recibida del usuario en modo de espera de respuesta (mode 2)
+unsigned char *msg;
+unsigned char dadesLlestes = 0;
 
-static unsigned char flag_dades_llestes = 0;
-
-void SERIAL_Init(void) {
-    TRISCbits.TRISC6 = 1; 
-    TRISCbits.TRISC7 = 1; 
-    TXSTAbits.BRGH = 0;
+void SIO_Init(void) {
+    TRISCbits.TRISC6 = 1;
+    TRISCbits.TRISC7 = 1;
     BAUDCONbits.BRG16 = 0;
-    SPBRG = 64; 
-    TXSTAbits.SYNC = 0;
-    RCSTAbits.SPEN = 1;
-    TXSTAbits.TXEN = 1;
-    RCSTAbits.CREN = 1;
+    TXSTA = CONFIGURACIO_TXSTA;
+    RCSTA = CONFIGURACIO_RCSTA;
+    SPBRG = DIVISOR_BAUDRATE;
 }
 
-// El Control activa l'enviament de missatges (Logs)
-void SERIAL_EnviarLog(const char *msg) {
-    if (estat_tx == 0) { // Només si no estem ja enviant un altre
-        ptr_tx = msg;
-        idx_tx = 0;
-        estat_tx = 1; // Passem a estat ENVIANT
-    }
+
+
+unsigned char SIO_RXAvail() {
+    return ((PIR1bits.RCIF == 1) ? CERT : FALS);
 }
 
-// El Control ens diu: "Escolta el teclat fins a X caràcters"
-void SERIAL_ActivarRecepcio(unsigned char quants) {
-    idx_rx = 0;
-    max_caracters = quants;
-    flag_dades_llestes = 0;
-    estat_rx = 1; // Passem a estat ESCOLTANT
+unsigned char SIO_GetChar() {
+    return RCREG;
 }
 
-// El Control ens pregunta: "Ja tenim el PIN?"
-unsigned char SERIAL_DadesLlestes(void) {
-    return flag_dades_llestes;
+
+unsigned char SIO_TXAvail(void) {
+    return ((PIR1bits.TXIF == 1) ? CERT : FALS);
 }
 
-// El Control recull el resultat
-char* SERIAL_GetBuffer(void) { 
-    estat_rx = 0; // Tornem a estar Sords (IDLE)
-    return buffer_rx; 
+void SIO_PutChar (unsigned char Valor) {
+    TXREG = Valor;
 }
 
-void SERIAL_Motor(void) {
-    
-    // --- MOTOR DE RECEPCIÓ (RX) ---
-    switch (estat_rx) {
-        case 0: // IDLE: El PIC ignora el que t'arribi per l'ordinador
+// cooperativitzar el motor SIO per a que es pugui enviar un missatge llarg sense bloquejar el sistema, per exemple, enviant un caràcter cada vegada que el motor sigui cridat i el buffer de transmissió estigui disponible.
+void SIO_EnviarLog(const char* log) {
+
+    if(TXSTAbits.TRMT){
+        i = 0;
+        msg = log; // Guardamos el mensaje a enviar en una variable global para que el motor pueda acceder a ella
+        mode = 1; // Cambiamos a modo de envío de log
+
+    }    
+}
+void SIO_modeResponse(void) {
+    mode = 2; // Cambiamos a modo de espera de respuesta del usuario
+    dadesLlestes = 0; // Reiniciamos el flag de datos listos para la nueva respuesta
+}
+
+unsigned char SIO_dadesLlestes(void) {
+    return dadesLlestes;
+}
+
+unsigned char * SIO_getResponse(void) {
+    return receivedResponse; // Retorna el último carácter recibido
+}
+
+// cooperativitzar el motor SIO per a que es pugui enviar un missatge llarg sense bloquejar el sistema, per exemple, enviant un caràcter cada vegada que el motor sigui cridat i el buffer de transmissió estigui disponible.
+void SIO_Motor(void){
+// mode 0 per enviar logs, mode 1 per esperar a que el missatge s'hagi enviat completament abans de permetre enviar un nou missatge
+// mode 2 i els seguents per a rebre i enviar missatge escrit quan lusuari hagi de posar yes o no per al reset del sistema.
+    switch (mode) {
+
+        case 0:
+            //estat de espera SIO no fa res. fa falta un flag que digui se es de enviar log o rebre missatge
+
             break;
 
-        case 1: // ESCOLTANT: L'usuari està teclejant el PIN
-            if (PIR1bits.RCIF) { 
-                char c = RCREG;
-                
-                // Si l'usuari tecleja i no s'ha passat de llarg
-                if (c != '\r' && idx_rx < max_caracters) {
-                    buffer_rx[idx_rx] = c;
-                    idx_rx++;
-                    TXREG = c; // ECHO: Mostrem el caràcter al terminal
-                }
-                
-                // Si premen Enter o arribem al límit (ex: 4 números)
-                if (c == '\r' || idx_rx == max_caracters) {
-                    buffer_rx[idx_rx] = '\0'; // Tanquem el text
-                    flag_dades_llestes = 1;    // Avisem al Control
-                    // Nota: estat_rx el posarà a 0 el Control quan cridi GetBuffer
-                }
-            }
-            break;
-    }
+        case 1:
 
-    // --- MOTOR DE TRANSMISSIÓ (TX) ---
-    switch (estat_tx) {
-        case 0: // IDLE: No hi ha res a dir
-            break;
-
-        case 1: // ENVIANT: Enviem el log caràcter a caràcter
-            if (TXSTAbits.TRMT) { 
-                TXREG = ptr_tx[idx_tx];
-                idx_tx++;
-                
-                if (ptr_tx[idx_tx] == '\0') {
-                    estat_tx = 0; // Tornem a IDLE quan acabem la frase
+            if (SIO_TXAvail()){
+                SIO_PutChar(msg[i]);
+                i++;
+                if(msg[i] == '\0') {
+                    mode = 0; // Cambiamos a modo de espera para el próximo mensaje
+                    i = 0; // Reiniciamos el índice para la próxima vez que se envíe un mensaje
                 }
             }
             break;
+        
+
+        case 2:
+
+            if (SIO_RXAvail()) {
+                receivedResponse[i] = SIO_GetChar();
+                if(SIO_TXAvail()) {
+                    SIO_PutChar(receivedResponse[i]); // Echo del carácter recibido
+                    i++;
+                }
+
+                if(receivedResponse[i] == '\0') {
+                    i = 0; // Reiniciamos el índice para la próxima respuesta
+                    mode = 0; // Cambiamos a modo de espera para el próximo mensaje
+                    dadesLlestes = 1; // Marcamos que los datos están listos para ser procesados
+                }
+                
+            }
+            
+            break;
     }
+
+
 }
+
+
+
+

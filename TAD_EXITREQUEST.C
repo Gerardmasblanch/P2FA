@@ -1,6 +1,7 @@
 
 #include "TAD_EXITREQUEST.H"
 #include "TAD_TIMER.H"
+#include "TAD_CONTROLLER.H"
 #include <xc.h>
 #include "pic18f4321.h"
 
@@ -42,8 +43,10 @@ void Pols_motor(){
         case 3:
             if(TI_GetTics(ElTimer) >= 5) {
                 // avisar a controler que s'ha premut EXIT REQUEST 
+                Pols_ExitRequest(1); // Marquem que el pols de l'Exit Request ha estat activat
                 estat = 0;
                 pols = 1; // variable que controller mirara si s'activa per saber q sha clicat boto
+
             } 
     }
 }

@@ -4,7 +4,7 @@
 #include <xc.h>
 
 #define KEYPAD_NINGUNA 20
-#define TECLA_PREMUDA() (!PORTBbits.RB3 || !PORTBbits.RB4 || !PORTBbits.RB5 || !PORTBbits.RB6)
+#define TECLA_PREMUDA(!PORTBbits.RB3 || !PORTBbits.RB4 || !PORTBbits.RB5 || !PORTBbits.RB6)
 
 static unsigned char timerSMS;
 static unsigned char timerRebotes;
@@ -82,7 +82,7 @@ static void resetSMSState(void){
 
 static void commitPendiente(void){
     if (teclaPendiente == KEYPAD_NINGUNA) return;
-    SERIAL_SendChar(traduccioKeypad(numClicksSMS, teclaPendiente));
+    SIO_sendChar(traduccioKeypad(numClicksSMS, teclaPendiente));
     teclaPendiente = KEYPAD_NINGUNA;
     resetSMSState();
 }
@@ -121,7 +121,7 @@ void KEY_Motor(void){
             if (primerCiclo && TI_GetTics(timerSMS) >= 500) { 
                 commitPendiente();
                 estat = 0;
-            } else if (TECLA_PREMIDA()) {
+            } else if (TECLA_PREMUDA()) {
                 TI_ResetTics(timerRebotes);
                 estat = 3;
             } else {
@@ -134,7 +134,7 @@ void KEY_Motor(void){
             if (primerCiclo && TI_GetTics(timerSMS) >= 500) {
                 commitPendiente();
                 estat = 0;
-            } else if (TECLA_PREMIDA()) {
+            } else if (TECLA_PREMUDA()) {
                 TI_ResetTics(timerRebotes);
                 estat = 3;
             } else {
@@ -147,7 +147,7 @@ void KEY_Motor(void){
             if (primerCiclo && TI_GetTics(timerSMS) >= 500) {
                 commitPendiente();
                 estat = 0;
-            } else if (TECLA_PREMIDA()) {
+            } else if (TECLA_PREMUDA()) {
                 TI_ResetTics(timerRebotes);
                 estat = 3;
             } else {
@@ -190,7 +190,7 @@ void KEY_Motor(void){
             }
 
             if (teclaPendiente != KEYPAD_NINGUNA && teclaPendiente != posicioTecla) {
-                SERIAL_SendChar(traduccioKeypad(numClicksSMS, teclaPendiente));
+                SIO_sendChar(traduccioKeypad(numClicksSMS, teclaPendiente));
 
                 teclaPendiente = posicioTecla;
                 numClicksSMS = 0;
@@ -198,7 +198,7 @@ void KEY_Motor(void){
                 primerCiclo = 1;
 
                 if (maxClicks(teclaPendiente) == 1) {
-                    SERIAL_SendChar(traduccioKeypad(0, teclaPendiente));
+                    SIO_sendChar(traduccioKeypad(0, teclaPendiente));
                     teclaPendiente = KEYPAD_NINGUNA;
                     resetSMSState();
                 }
@@ -213,7 +213,7 @@ void KEY_Motor(void){
                 primerCiclo = 1;
 
                 if (maxClicks(teclaPendiente) == 1) {
-                    SERIAL_SendChar(traduccioKeypad(0, teclaPendiente));
+                    SIO_sendChar(traduccioKeypad(0, teclaPendiente));
                     teclaPendiente = KEYPAD_NINGUNA;
                     resetSMSState();
                 }
@@ -227,7 +227,7 @@ void KEY_Motor(void){
                 TI_ResetTics(timerSMS);
                 primerCiclo = 1;
             } else {
-                SERIAL_SendChar(traduccioKeypad(0, teclaPendiente));
+                SIO_sendChar(traduccioKeypad(0, teclaPendiente));
                 teclaPendiente = KEYPAD_NINGUNA;
                 resetSMSState();
             }

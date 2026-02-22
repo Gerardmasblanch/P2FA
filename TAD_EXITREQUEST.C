@@ -8,13 +8,15 @@
 #define POLSADOR_PREMUT 0
 
 static unsigned char estat = 0;
-static unsigned char pols = 0;
-static unsigned char ElTimer;
+static unsigned char timerRebots;
 
 void Pols_Init(){
-    TRISBbits.TRSIB0 = 1;
+    TRISAbits.TRISA4 = 0;
+    LATAbits.LATA4 = 0;
+    
+    TRISBbits.TRISB0 = 1;
     INTCON2bits.RBPU = 0;
-    TI_NewTimer(&ElTimer);
+    TI_NewTimer(&timerRebots);
 }
 
 void Pols_motor(){
@@ -23,30 +25,38 @@ void Pols_motor(){
 
         case 0:
             if(PORTBbits.RB0 == POLSADOR_PREMUT){
-                TI_ResetTics(ElTimer);
+                TI_ResetTics(timerRebots);
                 estat = 1;
+            } else {
+                estat = 0;
             }
             break;
         case 1 : 
-            if(TI_GetTics(ElTimer) >= 5) {
+            if(TI_GetTics(timerRebots) >= 5) {
                 estat = 2;
-            
+            } else {
+                estat = 1;
             }
             break;
         case 2:
             if(PORTBbits.RB0 != POLSADOR_PREMUT) {
-                TI_ResetTics(ElTimer);
+                TI_ResetTics(timerRebots);
+                LATAbits.LATA4 = 1;
                 estat = 3;
-
+            } else {
+                estat = 2;
             }
             break;
         case 3:
-            if(TI_GetTics(ElTimer) >= 5) {
-                // avisar a controler que s'ha premut EXIT REQUEST 
-                Pols_ExitRequest(1); // Marquem que el pols de l'Exit Request ha estat activat
+            if(TI_GetTics(timerRebots) >= 5) {
+                Pols_ExitRequest(1); 
                 estat = 0;
-                pols = 1; // variable que controller mirara si s'activa per saber q sha clicat boto
-
-            } 
+            } else {
+                estat = 3;
+            }
+            break;
+        default:
+            estat = 0;
+            break;
     }
 }

@@ -43,11 +43,11 @@ static const unsigned char keypadLectura[12][5] = {
 };
 
 static void barridoPorts(unsigned char col) {
-    LATBbits.LATB0 = 1;
+    LATBbits.LATB7 = 1;
     LATBbits.LATB1 = 1;
     LATBbits.LATB2 = 1;
 
-    if(col == 0) LATBbits.LATB0 = 0;
+    if(col == 0) LATBbits.LATB7 = 0;
     if(col == 1) LATBbits.LATB1 = 0;
     if(col == 2) LATBbits.LATB2 = 0;
 }
@@ -91,7 +91,7 @@ void KEY_Init(void){
 
     ADCON1bits.PCFG = 0x0F;
 
-    TRISBbits.TRISB0 = 0;
+    TRISBbits.TRISB7 = 0;
     TRISBbits.TRISB1 = 0;
     TRISBbits.TRISB2 = 0;
 
@@ -105,7 +105,7 @@ void KEY_Init(void){
     TI_NewTimer(&timerRebotes);
     TI_NewTimer(&timerSMS);
 
-    LATBbits.LATB0 = 1;
+    LATBbits.LATB7 = 1;
     LATBbits.LATB1 = 1;
     LATBbits.LATB2 = 1;
 

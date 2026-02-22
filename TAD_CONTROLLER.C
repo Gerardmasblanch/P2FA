@@ -15,12 +15,11 @@ unsigned char intents = 0;
 unsigned char estat = 0;
 unsigned char pol_hall;
 unsigned char pol_exit_request;
-unsigned char ElTimer; // Timer virtual per controlar els temps d'espera entre estats
-unsigned char Flag_Newdaymsg = 0; // Flag per controlar l'enviament del missatge de "New Day" només un cop al dia
+//unsigned char ElTimer; // Timer virtual per controlar els temps d'espera entre estats
+unsigned char Flag_NewdayMsg = 1;
 
 
 void Init_Controller(){
-
     // sortida els pins dels leds
     TRISDbits.RD0 = 0;
     TRISDbits.RD1 = 0;
@@ -30,19 +29,19 @@ void Init_Controller(){
     LED_ALARMA = 0;
     intents = 0;
     estat = 0;
-    TI_NewTimer(ElTimer); // Creem un timer virtual per controlar els temps d'espera entre estats
+   // TI_NewTimer(); 
 
 }
 
 void Hall_Ences(char ences) {
     if (ences) {
-        pols_hall = 1; // Marquem que el pols del hall ha estat activat
+        pols_hall = 1; // hall activat
     } 
 }
 
 void Pols_ExitRequest(char pols) {
     if (pols) {
-        pol_exit_request = 1; // Marquem que el pols de l'Exit Request ha estat activat
+        pol_exit_request = 1; // boto activat
     }
     
 }
@@ -51,16 +50,20 @@ void Motor_Controller(){
 
     switch (estat){
 
-        case 0: // estat inicial, esperant que s'obri la porta exterior
-            if (Flag_Newdaymsg == 0) {
-                SERIAL_EnviarLog(MSG_NEW_DAY); // Enviem log de "New Day"
-                Flag_Newdaymsg = 1; // Marquem que ja hem enviat el missatge
-            }
-
-            if(pols_hall == 1) {
-                SERIAL_EnviarLog(MSG_OPEN_EXT); // Enviem log d'obertura de porta exterior
-                pols_hall = 0; // Resetejem el pols del hall per evitar múltiples activacions
-                estat = 1;
+        case 0:
+            if (Flag_NewdayMsg == 1) {
+                if (!SIO_isBusy()) {
+                    SERIAL_EnviarLog(MSG_HELLO);
+                    Flag_NewdayMsg = 0;
+                }
+            } else if(pol_exit_request == 1) {   //canvio de moment al boto de exit
+                if (!SIO_isBusy()) { 
+                    SERIAL_EnviarLog(MSG_OPEN_EXT);
+                    pol_exit_request = 0;
+                    estat = 1;
+                }
+            } else {
+                estat = 0; 
             }
             break;
 
@@ -112,5 +115,7 @@ void Motor_Controller(){
                 estat = 0; // tornem a l'estat inicial
             }
             break;
+        default:
+            estat = 0;
     }
 }

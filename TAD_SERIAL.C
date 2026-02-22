@@ -84,6 +84,10 @@ void SIO_sendString(const char* str) {
     estat = 2;                // enviant un string
 }
 
+// Si esta ocupat
+unsigned char SIO_isBusy(void){
+    return (estat != 0);
+}
 
 // PIN
 

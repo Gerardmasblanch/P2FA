@@ -28,4 +28,6 @@ void SIO_startCapture(void);
 unsigned char SIO_captureReady(void);   
 char* SIO_getCapture(void);             
 
+unsigned char SIO_isBusy(void);
+
 #endif

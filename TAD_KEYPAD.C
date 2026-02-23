@@ -4,7 +4,7 @@
 #include <xc.h>
 
 #define KEYPAD_NINGUNA 20
-#define TECLA_PREMUDA(!PORTBbits.RB3 || !PORTBbits.RB4 || !PORTBbits.RB5 || !PORTBbits.RB6)
+#define TECLA_PREMUDA() (!PORTBbits.RB3 || !PORTBbits.RB4 || !PORTBbits.RB5 || !PORTBbits.RB6)
 
 static unsigned char timerSMS;
 static unsigned char timerRebotes;

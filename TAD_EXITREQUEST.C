@@ -41,7 +41,6 @@ void Pols_motor(){
         case 2:
             if(PORTBbits.RB0 != POLSADOR_PREMUT) {
                 TI_ResetTics(timerRebots);
-                LATAbits.LATA4 = 1;
                 estat = 3;
             } else {
                 estat = 2;

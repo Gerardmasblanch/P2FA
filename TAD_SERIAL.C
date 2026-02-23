@@ -18,6 +18,7 @@ static unsigned char pinFlag = 0;
 static unsigned char pinPosition = 0;
 static unsigned char pinCompleted = 0;
 static unsigned char pinFlagSpace = 0;
+static unsigned char pinFlagN = 0;
 static char pin[SIZE_PIN]; 
 
 // CAPTURE
@@ -43,6 +44,7 @@ void SIO_Init(void) {
     // PIN
     pinFlag = 0;
     pinFlagSpace = 0;
+    pinFlagN = 0;
     pinPosition = 0;
     pinCompleted = 0;
     pin[0] = '\0';
@@ -96,6 +98,7 @@ void SIO_startPin(){
     pinPosition = 0;
     pinCompleted = 0;
     pinFlagSpace = 0;
+    pinFlagN = 0;
     pin[0] = '\0';
 }
 
@@ -140,9 +143,14 @@ void SIO_Motor(void) {
             if (!PIR1bits.TXIF) break; // flag si esta lliure o no per transmetre
             TXREG = carToSend; // pinPosition = 7 
             if (pinFlagSpace) {
-                carToSend = '\n';
+                carToSend = '\r';
                 estat = 1;
-                pinFlagSpace = 0;
+                if (pinFlagN){
+                    carToSend = '\n';
+                    pinFlagSpace = 0;
+                    pinFlagN = 0;
+                }
+                pinFlagN = 1;
             } else {
                 estat = 0; 
             }

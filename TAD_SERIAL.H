@@ -12,7 +12,7 @@
 #define MSG_DENIED      "> Permission Denied\r\n"
 #define MSG_THIEF       "> THIEF INTERCEPTED!\r\n"
 #define MSG_RESET       "> Reset System? "
-#define MSG_EXIT_REQ    "> Exit Requested\r\n"
+#define MSG_EXIT_REQ    "> Exit Requested: "
 
 void SIO_Init(void);
 void SIO_Motor(void);

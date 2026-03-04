@@ -1,16 +1,41 @@
 #ifndef TAD_SPEAKER_H
-#define TAD_SPEAKER_H
+#define	TAD_SPEAKER_H
 
+#include <xc.h>
 
+/**
+ * @brief Inicialitza el maquinari del Speaker (RD3) i els timers virtuals.
+ * Ha de ser cridada un sol cop a l'inici del programa.
+ */
+void speaker_init(void);
 
-// Tipus de sons segons l'enunciat
-#define SO_AGUT   1   // Portes: 2 segons
-#define SO_GREU   2   // Beep PIN: 100 ms
-#define SO_ALARMA 3   // Alarma: 10 segons
+/**
+ * @brief Motor del TAD Speaker.
+ * Ha de ser cridat periòdicament dins del bucle principal (while(1)) 
+ * per gestionar el so de forma no bloquejant.
+ */
+void speaker_motor(void);
 
+/**
+ * @brief Atura qualsevol so que s'estigui reproduint actualment.
+ */
+void speaker_stopSound(void);
 
-void Speaker_Init(void);
-void Speaker_Motor(void);
-void Speaker_Trigger(unsigned char tipus);
+/**
+ * @brief Activa un so agut curt. 
+ * Ideal per a confirmacions o obertura de portes.
+ */
+void speaker_playAcuteSound(void);
 
-#endif
+/**
+ * @brief Activa un so d'alarma continu durant 10 segons.
+ */
+void speaker_playAlarmSound(void);
+
+/**
+ * @brief Activa el mode de so de pressió (2 minuts).
+ * Comença amb un bip cada 1s i accelera a un cada 500ms a partir dels 1:45.
+ */
+void speaker_playPressureSound(void);
+
+#endif	/* TAD_SPEAKER_H */

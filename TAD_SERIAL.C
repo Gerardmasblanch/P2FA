@@ -167,7 +167,7 @@ void SIO_Motor(void) {
             }
             break;
         
-        case 3: // captura
+        case 3: 
             if (!captureFlag) {
                 estat = 0; 
                 break; 
@@ -176,7 +176,10 @@ void SIO_Motor(void) {
             if (PIR1bits.RCIF) {
                 c = RCREG;
 
-                if (c == '\n') {
+                if(PIR1bits.TXIF){
+                    TXREG = c;
+                }
+                if (c == '\n' || c == '\r') {
                     capture[capturePosition] = '\0';
                     captureCompleted = 1;
                     captureFlag = 0;

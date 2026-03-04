@@ -13,6 +13,8 @@
 #define MSG_THIEF       "> THIEF INTERCEPTED!\r\n"
 #define MSG_RESET       "> Reset System? "
 #define MSG_EXIT_REQ    "> Exit Requested: "
+#define MSG_OPEN_BOTH   "> Open both doors\r\n"
+#define MSG_CLOSE_BOTH  "> Close both doors\r\n"
 
 void SIO_Init(void);
 void SIO_Motor(void);

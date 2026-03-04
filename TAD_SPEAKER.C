@@ -1,81 +1,156 @@
-#include "TAD_SPEAKER.H"
-#include "TAD_TIMER.H"
-//#include <xc.h>
-#include "pic18f4321.h"
+#include "TAD_SPEAKER.h"
+#include "TAD_TIMER.h"
+#include <xc.h>
 
-// Configuraci� del Hardware
-#define PIN_SPEAKER LATBbits.LATB3
-#define TRIS_SPEAKER TRISBbits.TRISB3
+/* Constants en tics (1 tic = 2 ms) */
+#define ACUTE_DURATION      1000    /* so agut curt (aprox 200ms) */
+#define ALARM_DURATION      5000    /* alarma 10 s */
+#define PRESSURE_TOTAL      60000   /* 2 minuts */
+#define PRESSURE_PHASE1     52500   /* 1:45 = 105 s */
 
-// Estats numerats de la m�quina d'estats
-#define ST_IDLE         0
-#define ST_START_SOUND  1
-#define ST_PLAYING      2
+#define PRESSURE_PERIOD1    500     /* 1 s entre bips */
+#define PRESSURE_PERIOD2    250     /* 500 ms entre bips */
+#define SOUND_PULSE         50      /* El bip dura 100 ms */
 
-// Variables privades (encapsulades)
-static unsigned char estat_spk = ST_IDLE;
-static unsigned char hTimer;         // El "handle" del timer virtual
-static unsigned long durada_tics;    // Temps total de so
-static unsigned char tics_toggle;    // Per a la freq��ncia (m�s tics = m�s greu)
-static unsigned long proxima_commuta;
+#define ACUTE_SEMIPERIOD    1       /* To més ràpid */
+#define ALARM_SEMIPERIOD    2       
+#define GRAVE_SEMIPERIOD    4       /* To més lent (greu) */
 
-void Speaker_Init(void) {
-    
-    if (TI_NewTimer(&hTimer) == TI_FALS) {
-        // Si arriba aqu�, �s que no tenim prou timers definits al TAD_TIMER.C
-    }
-    estat_spk = ST_IDLE;
-    TRISCbits.RC2 = 0;  
+/*=====================================================
+  VARIABLES PRIVADES
+=====================================================*/
+static unsigned char Estat = 0;
+
+static unsigned char *TimerDuracio;   /* Durada total de l'estat */
+static unsigned char *TimerPulse;     /* Temps per la cadència (on/off del bip) */
+static unsigned char *TimerTone;      /* Temps per la freqüència (ona quadrada) */
+
+static unsigned int ToneSemiperiodTics = 0;
+
+/*=====================================================
+  FUNCIONS PRIVADES
+=====================================================*/
+
+static void SPE_StopInternal(void) {
+    LATAbits.LATA1 = 0;
+    timer_resetTics(&TimerDuracio);
+    timer_resetTics(&TimerPulse);
+    timer_resetTics(&TimerTone);
 }
 
-void Speaker_Trigger(unsigned char tipus) {
-    // Si est� lliure o �s una alarma (que t� prioritat), configurem
-    if (estat_spk == ST_IDLE || tipus == SO_ALARMA) {
-        switch(tipus) {
-            case SO_AGUT:
-                // 2 segons = 2000ms. Com que cada tic s�n 2ms
-                durada_tics = 1000; 
-                tics_toggle = 1;     // Freq��ncia alta (commuta cada 2ms)
+/*=====================================================
+  MOTOR DEL TAD
+=====================================================*/
+void speaker_motor(void) {
+    unsigned int tDuracio;
+    unsigned int tPulse;
+    unsigned int tTone;
+    unsigned int periodActualTics;
+
+    switch(Estat) {
+        case 0: /* IDLE */
+            break;
+
+        case 1: /* SO AGUT CURT */
+            tDuracio = timer_getTics(TimerDuracio);
+            if (tDuracio >= ACUTE_DURATION) {
+                SPE_StopInternal();
+                Estat = 0;
                 break;
-            case SO_GREU:
-                // 100ms = 50 tics
-                durada_tics = 50;   
-                tics_toggle = 5;     // Freq��ncia baixa (commuta cada 10ms)
+            }
+            tTone = timer_getTics(TimerTone);
+            if (tTone >= ToneSemiperiodTics) {
+                LATAbits.LATA1 ^= 1; 
+                timer_resetTics(TimerTone);
+            }
+            break;
+
+        case 2: /* ALARMA CONTINUA 10S */
+            tDuracio = timer_getTics(TimerDuracio);
+            if (tDuracio >= ALARM_DURATION) {
+                SPE_StopInternal();
+                Estat = 0;
                 break;
-            case SO_ALARMA:
-                // 10 segons = 5000 tics
-                durada_tics = 5000; 
-                tics_toggle = 2;     // Freq��ncia d'alarma
+            }
+            tTone = timer_getTics(TimerTone);
+            if (tTone >= ToneSemiperiodTics) {
+                LATAbits.LATA1 ^= 1;
+                timer_resetTics(TimerTone);
+            }
+            break;
+
+        case 3: /* MODE PRESSIÓ (2 MINUTS) */
+            tDuracio = timer_getTics(TimerDuracio);
+            if (tDuracio >= PRESSURE_TOTAL) {
+                SPE_StopInternal();
+                Estat = 0;
                 break;
-        }
-        estat_spk = ST_START_SOUND;
+            }
+
+            // Decidim si estem en fase lenta (1s) o ràpida (0.5s)
+            periodActualTics = (tDuracio < PRESSURE_PHASE1) ? PRESSURE_PERIOD1 : PRESSURE_PERIOD2;
+
+            tPulse = timer_getTics(TimerPulse);
+            if (tPulse < SOUND_PULSE) {
+                // Estem dins del "BIP" actiu
+                tTone = timer_getTics(TimerTone);
+                if (tTone >= ToneSemiperiodTics) {
+                    LATAbits.LATA1 ^= 1;
+                    timer_resetTics(TimerTone);
+                }
+            } else {
+                // Estem en el silenci entre bips
+                LATAbits.LATA1 = 0;
+            }
+
+            // Reiniciem el cicle del bip (el període)
+            if (tPulse >= periodActualTics) {
+                timer_resetTics(TimerPulse);
+                timer_resetTics(TimerTone);
+            }
+            break;
+
+        default:
+            SPE_StopInternal();
+            Estat = 0;
+            break;
     }
 }
 
-void Speaker_Motor(void) {
-    switch (estat_spk) {
-        case ST_IDLE:
-            PIN_SPEAKER = 0;
-            break;
+/*=====================================================
+  FUNCIONS PÚBLIQUES
+=====================================================*/
 
-        case ST_START_SOUND:
-            TI_ResetTics(hTimer);   // Posem el comptador a 0
-            proxima_commuta = 0;
-            estat_spk = ST_PLAYING;
-            break;
+void speaker_init(void) {
+    TRISAbits.RA1 = 0; // Configura RD3 com sortida
+    LATAbits.LATA1 = 0;
 
-        case ST_PLAYING:
-            // 1. Control de l'oscil�laci� (freq��ncia del to)
-            if (TI_GetTics(hTimer) >= proxima_commuta) {
-                PIN_SPEAKER = !PIN_SPEAKER; // Fem moure la membrana de l'altaveu
-                proxima_commuta += tics_toggle;
-            }
+    timer_newTimer(&TimerDuracio);
+    timer_newTimer(&TimerPulse);
+    timer_newTimer(&TimerTone);
 
-            // 2. Control del temps total que ha de durar el so
-            if (TI_GetTics(hTimer) >= durada_tics) {
-                PIN_SPEAKER = 0;
-                estat_spk = ST_IDLE; // Hem acabat, tornem a esperar
-            }
-            break;
-    }
+    Estat = 0;
+}
+
+void speaker_stopSound(void) {
+    SPE_StopInternal();
+    Estat = 0;
+}
+
+void speaker_playAcuteSound(void) {
+    speaker_stopSound();
+    ToneSemiperiodTics = ACUTE_SEMIPERIOD;
+    Estat = 1;
+}
+
+void speaker_playAlarmSound(void) {
+    speaker_stopSound();
+    ToneSemiperiodTics = ALARM_SEMIPERIOD;
+    Estat = 2;
+}
+
+void speaker_playPressureSound(void) {
+    speaker_stopSound();
+    ToneSemiperiodTics = GRAVE_SEMIPERIOD;
+    Estat = 3;
 }

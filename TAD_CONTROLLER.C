@@ -2,10 +2,10 @@
 #include "TAD_TIMER.H"
 #include "TAD_CONTROLLER.H"
 #include "TAD_INTENSITY.h"
-#include "TAD_SERIAL.H"
+#include "TAD_SERIE.H"
 #include "TAD_KEYPAD.h"
-//#include "TAD_HALL.H"
-//#include "TAD_SPEAKER.H"
+#include "TAD_HALL.H"
+#include "TAD_SPEAKER.H"
 #include <xc.h>
 #include "pic18f4321.h"
 
@@ -21,7 +21,8 @@ static unsigned char Flag_NewdayMsg = 1;
 static unsigned char flagPIN = 0; 
 static unsigned char flagCAP = 0;
 static unsigned char timerNewDay;
-
+static unsigned char flagR = 0; // Flag per controlar l'estat de reset del sistema
+static unsigned char pols_hall = 0; // Variable para controlar el estado del sensor Hall
 
 void Init_Controller(){
     // sortida els pins dels leds
@@ -33,8 +34,10 @@ void Init_Controller(){
     LED_ALARMA = 0;
     intents = 0;
     estat = 0;
-
+    pol_exit_request = 0;
     flagCAP = 0;
+    pols_hall = 0;        // Recomanat netejar també aquesta
+    Flag_NewdayMsg = 1;
 
     TI_NewTimer(&ElTimer); 
     TI_NewTimer(&timerNewDay);
@@ -42,11 +45,11 @@ void Init_Controller(){
 
 }
 
-//void Hall_Ences(char ences) {
-//    if (ences) {
- //       pols_hall = 1; // hall activat
- //   } 
-//}
+void Hall_Ences(char ences) {
+    if (ences) {
+        pols_hall = 1; // Marquem que el pols del hall ha estat activat
+    } 
+}
 
 void Pols_ExitRequest(char pols) {
     if (pols) {
@@ -102,16 +105,7 @@ void Motor_Controller(){
             }
             
             if(TI_GetTics(ElTimer) >= 60000 || intents == 3) { // 60000 tics = 2 minuts (60000 * 2ms = 120 segundos)
-                
-                SIO_sendString(MSG_THIEF); // Enviem log de "THIEF INTERCEPTED!"
-                LED_ALARMA = 1; // Encenem el led d'alarma
-                //apagar led intesity
-                //so altaveu alarma
-                estat = 5;   // Aixo tampoc va aqui
-                LED_OK = 0;
-                stopIntensity();
-
-                flagCAP = 1; // de moment pero no va aqui
+                estat = 8;
 
                 
             } else {
@@ -145,44 +139,110 @@ void Motor_Controller(){
             if(TI_GetTics(ElTimer) >= 1000) { // 1000 tics = 2 segons
                 TI_ResetTics(ElTimer); // resetejem el timer per a la pròxima comparació
                 estat = 4; // tornem a l'estat inicial
-                SIO_sendString(MSG_CLOSE_INT); // Enviem log de tancament de porta interior
+                if(!SIO_isBusy()){
+                    SIO_sendString(MSG_CLOSE_INT); // Enviem log de tancament de porta interior
+                }
+            } else {
+                // Fer sonar el speaker que quan passin els 2 segons deixara de sonar i es mostrarà el missatge
             }
+
             break;
         
         case 4: // porta interior tancada, sistema en espera de nova activació
             if(pol_exit_request == 1) {   
-                SIO_sendString(MSG_EXIT_REQ);
-                SIO_startCapture(); // Iniciem la captura de dades per al log d'Exit Request
-                estat = 5; // canviem a l'estat d'espera de captura
+                if (!SIO_isBusy()){
+                    SIO_sendString(MSG_EXIT_REQ);
+                   // SIO_startCapture(); // Iniciem la captura de dades per al log d'Exit Request
+                    estat = 5; // canviem a l'estat d'espera de captura
+                    flagCAP = 1;
+                }
+                
             } 
             break;
         case 5: 
 
             if (flagCAP && !SIO_isBusy()) {
-                SIO_startCapture();
+                SIO_sendString(MSG_EXIT_REQ); 
                 if (flagCAP && !SIO_isBusy()) {
-                    SIO_sendString(MSG_EXIT_REQ); 
+                    SIO_startCapture();
                     flagCAP = 0; 
                 }
             }
             
             if (SIO_captureReady()) {
                     char* captureData = SIO_getCapture();
-                    SIO_sendString(captureData); // Enviem el log d'Exit Request amb les dades capturades
-                    if(captureData[0] == 'Y' && captureData[1] == 'E' && captureData[2] == 'S') { // Si la captura indica que es confirma el reset del sistema
-                        
+                    if(captureData[0] == 'Y' && captureData[1] == 'e' && captureData[2] == 's') { // Si la captura indica que es confirma el reset del sistema
+                        estat = 6;
                     } else {
-                        if(captureData[0] == 'N' && captureData[1] == 'O') { // Si la captura indica que no es confirma el reset del sistema
+                        if(captureData[0] == 'N' && captureData[1] == 'o') { // Si la captura indica que no es confirma el reset del sistema
                             estat = 8;
                         } else {
-                            SIO_sendString(MSG_RESET); // Enviem log de "Reset System?" per si la captura no és clara o no conté una resposta vàlida
+                           flagCAP = 1; // Si la captura no es ni "Yes" ni "No", tornem a iniciar la captura per esperar una resposta vàlida
                         }
-                        estat = 6;
                     }
+
+            }
+            break;
+
+        case 6: // S'obren les dues portes i es torna a començar el sistema
+            if(!SIO_isBusy()) {
+                SIO_sendString(MSG_OPEN_BOTH); // Enviem log de tancament de porta interior
+                TI_ResetTics(ElTimer); // resetejem el timer per a la pròxima comparació
+            }
+            
+            estat = 7; // Tornem a l'estat inicial
+            break;
+
+        case 7: // Es tanca la porta exterior i es torna a l'estat inicial
+            
+            if(!SIO_isBusy()) {
+                SIO_sendString(MSG_CLOSE_BOTH); // Enviem log de tancament de porta interior
+                TI_ResetTics(ElTimer); // resetejem el timer per a la pròxima comparació
+            }
+            
+            estat = 0; // Tornem a l'estat inicial
+            break;
+        case 8: 
+            if(!SIO_isBusy()){
+                SIO_sendString(MSG_THIEF);
+                LED_ALARMA = 1; 
+                LED_OK = 0;
+                stopIntensity();
+                //speaker_playAlarmSound(); // Activem el so de l'altaveu
+                
+                flagR = 1; // Usem el flag per indicar que hem d'enviar el següent missatge (RESET)
+                estat = 9; 
+            }
+            break;
+
+        case 9:
+            // Pas 1: Enviem el missatge de RESET
+            if (flagR && !SIO_isBusy()) {
+                SIO_sendString(MSG_RESET); 
+                flagR = 0; 
+                flagCAP = 1; // Usem aquest flag per indicar que ara volem capturar
+            }
+
+            // Pas 2: Activem la captura NOMÉS UNA VEGADA
+            if (flagCAP && !SIO_isBusy()) {
+                SIO_startCapture();
+                flagCAP = 0; // El baixem immediatament perquè no torni a entrar aquí
+            }
+
+            // Pas 3: Processem la resposta quan estigui llesta
+            if (SIO_captureReady()) {
+                char* captureData = SIO_getCapture();
+                if(captureData[0] == 'Y' && captureData[1] == 'e' && captureData[2] == 's') {
+                    speaker_stopSound();
+                    Init_Controller();   
                 } else {
-                    estat = 4; // Esperem a que la captura estigui llesta
+                    // Si s'equivoca, tornem a demanar el missatge i reiniciem el flux
+                    flagR = 1; 
                 }
+            }
+            break;
             
             
     }
 }
+

@@ -4,22 +4,22 @@
 
 // fico 100 nivells de intensitat 
 // 60 000 / 100 = 600 tics per nivell
-#define TEMPS_NIVELL 4000  // <-- 60 000 / 25 = 2400 tics // 6000
-#define NIVELLS 15                                        // 10
+#define TEMPS_NIVELL 4000  // <-- 60 000 / 25 = 2400 tics 
+#define NIVELLS 15         
 
-unsigned char timerIntesity;
-unsigned char timerOSC;
-unsigned char estat = 0;
+static unsigned char timerIntesity;
+static unsigned char timerOSC;
+static unsigned char estat = 0;
  
-unsigned char nivellIntesity = 0;  // indica en que nivell --> BRILLANTOR
-unsigned char oscilacioIntesity = 0;  // cuantes oscialacions --> relacio OSC i BRILLANTOR
+static unsigned char nivellIntesity = 0;  // indica en que nivell --> BRILLANTOR
+static unsigned char oscilacioIntesity = 0;  // cuantes oscialacions --> relacio OSC i BRILLANTOR
 
-unsigned char flagIntesity = 0; 
-unsigned char flagFinal = 0; // ha arribat al maxim 
-unsigned char resetOscilacio = 0; 
+static unsigned char flagIntesity = 0; 
+static unsigned char flagFinal = 0; // ha arribat al maxim 
+static unsigned char resetOscilacio = 0; 
 
 
-void Intensity_init(void) {
+void Intesity_init(void) {
     
     ADCON1bits.PCFG = 0x0F; 
 
@@ -48,7 +48,7 @@ void stopIntensity() {
     LATAbits.LATA4 = 0; 
 }
 
-void Intensity_motor(void) {
+void Intesity_motor(void) {
     switch (estat) {
         case 0:
             LATAbits.LATA4 = 0;
@@ -102,7 +102,6 @@ void Intensity_motor(void) {
              break;
     }
 }
-
 
 
 

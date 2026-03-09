@@ -1,6 +1,6 @@
 
 #include "TAD_EXITREQUEST.H"
-#include "TAD_TIMER.H"
+#include "TAD_TMR.H"
 #include "TAD_CONTROLLER.H"
 #include <xc.h>
 #include "pic18f4321.h"
@@ -25,22 +25,25 @@ void Pols_motor(){
 
         case 0:
             if(PORTBbits.RB0 == POLSADOR_PREMUT){
-                TI_ResetTics(timerRebots);
+                TI_ResetTics(&timerRebots);
                 estat = 1;
             } else {
                 estat = 0;
             }
             break;
         case 1 : 
-            if(TI_GetTics(timerRebots) >= 5) {
+            if(TI_GetTics(&timerRebots) >= 5) {
                 estat = 2;
+                //LATAbits.LATA4 = 1;
             } else {
                 estat = 1;
+                //LATAbits.LATA4 = 1;
             }
             break;
         case 2:
             if(PORTBbits.RB0 != POLSADOR_PREMUT) {
                 TI_ResetTics(timerRebots);
+                LATAbits.LATA4 = 1;
                 estat = 3;
             } else {
                 estat = 2;
@@ -48,14 +51,12 @@ void Pols_motor(){
             break;
         case 3:
             if(TI_GetTics(timerRebots) >= 5) {
-                Pols_ExitRequest(1); 
+                Pols_ExitRequest(1);  //Funico del controller
                 estat = 0;
+                LATAbits.LATA4 = 1;
             } else {
                 estat = 3;
             }
-            break;
-        default:
-            estat = 0;
             break;
     }
 }

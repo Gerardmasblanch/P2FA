@@ -180,6 +180,12 @@ void SIO_Motor(void) {
                     TXREG = c;
                 }
                 if (c == '\n' || c == '\r') {
+
+                    // enviar salto de línea correcto a la terminal
+                    if (PIR1bits.TXIF) TXREG = '\r';
+                    while (!PIR1bits.TXIF);
+                    TXREG = '\n';
+
                     capture[capturePosition] = '\0';
                     captureCompleted = 1;
                     captureFlag = 0;
@@ -204,4 +210,3 @@ void SIO_Motor(void) {
             estat = 0;
             break;
     }
-}

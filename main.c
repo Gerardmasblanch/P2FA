@@ -1,43 +1,49 @@
-/*
- * File:   main.c
- * Author: gerim
- *
- * Created on 16 de febrero de 2026, 17:31
- */
-
- // --- INCLUDES --- de tots els TADs 
-
-#include "TAD_SERIE.H" 
+#include "TAD_SERIAL.H"
+#include "TAD_HALL.H"
+#include "TAD_INTENSITY.h"
 #include "TAD_EXITREQUEST.H"
 #include "TAD_CONTROLLER.H"
-#include "TAD_HALL.H"
-#include "TAD_SPEAKER.H"
 #include "TAD_KEYPAD.H"
-#include "TAD_INTESITY.H"
+#include "TAD_SPEAKER.H"
 #include "TAD_TIMER.H"
 #include <xc.h>
 
+#pragma config OSC = HS
+#pragma config PBADEN = DIG
+#pragma config MCLRE = ON
+#pragma config DEBUG = OFF
+#pragma config PWRT = OFF
+#pragma config BOR = OFF
+#pragma config WDT = OFF
+#pragma config LVP = OFF
 
-void main(void) {
-    
-    //inits de tots els TADs
-    SIO_Init();
-    EXITREQUEST_Init();
-    TIMER_Init();
-    CONTROLLER_Init();
-
-    while(1){
-
-        SIO_Motor();
-        EXITREQUEST_Motor();
-        CONTROLLER_Motor();
-        HALL_Motor();
-        SPEAKER_Motor();
-        KEYPAD_Motor();
-        INTENSITY_Motor();
-
+void __interrupt() isr(void)
+{
+    if (INTCONbits.TMR0IF && INTCONbits.TMR0IE) {
+        RSI_Timer0();
     }
+}
+
+void main(void) {   
     
-    
-    return;
+    TI_Init(); 
+    SIO_Init();
+    Pols_Init();
+    Init_Controller();
+    Intesity_init();
+    KEY_Init();
+    HALL_Init();
+    speaker_init();
+
+    ei();
+    while(1){
+        
+        Motor_Controller();
+        SIO_Motor();
+        Pols_motor();
+        Intesity_motor();
+        KEY_Motor();
+        Motor_Hall();
+        speaker_motor();
+    }
 }

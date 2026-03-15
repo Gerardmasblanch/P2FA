@@ -29,7 +29,7 @@ static char capture[SIZE_CAPTURE];
 static unsigned char c; 
 
 void SIO_Init(void) {
-    TRISCbits.TRISC6 = 0; // TX --> transmetre
+    TRISCbits.TRISC6 = 1; // TX --> transmetre
     TRISCbits.TRISC7 = 1; // RX --> rebre
 
     BAUDCONbits.BRG16 = 0;
@@ -180,8 +180,6 @@ void SIO_Motor(void) {
                     TXREG = c;
                 }
                 if (c == '\n' || c == '\r') {
-
-                    // enviar salto de línea correcto a la terminal
                     if (PIR1bits.TXIF) TXREG = '\r';
                     while (!PIR1bits.TXIF);
                     TXREG = '\n';
@@ -210,3 +208,4 @@ void SIO_Motor(void) {
             estat = 0;
             break;
     }
+}

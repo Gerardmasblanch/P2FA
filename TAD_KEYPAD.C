@@ -38,8 +38,8 @@ static const unsigned char keypadLectura[12][5] = {
     {'7','P','Q','R','S'}, // 7
     {'8','T','U','V','V'}, // 8
     {'9','W','X','Y','Z'}, // 9
-    {' ',' ',' ',' ',' '}, // 10 = *
-    {' ',' ',' ',' ',' '}  // 11 = #
+    {' ',' ',' ',' ',' '}, // 10 
+    {' ',' ',' ',' ',' '}  // 11 
 };
 
 static void barridoPorts(unsigned char col) {
@@ -69,7 +69,7 @@ static char traduccioKeypad(unsigned char clicks, unsigned char tecla) {
 }
 
 static unsigned char maxClicks(unsigned char tecla) {
-    if (tecla == 1 || tecla == 10 || tecla == 11) return 1; // 1, *, #
+    if (tecla == 1 || tecla == 10 || tecla == 11) return 1; // 1
     if (tecla == 0) return 2;                               // 0
     if (tecla == 7 || tecla == 9) return 5;                 // 7, 9
     return 4;                                               // 2,3,4,5,6,8
@@ -188,7 +188,6 @@ void KEY_Motor(void) {
                 break;
             }
 
-            // No hay tecla pendiente: guardamos la nueva
             if (teclaPendiente == KEYPAD_NINGUNA) {
                 teclaPendiente = posicioTecla;
                 numClicksSMS = 0;
@@ -198,8 +197,6 @@ void KEY_Motor(void) {
                 break;
             }
 
-            // Si es una tecla distinta, primero confirmamos la anterior
-            // y dejamos la nueva pendiente para la siguiente vuelta
             if (teclaPendiente != posicioTecla) {
                 commitPendiente();
 
@@ -211,15 +208,12 @@ void KEY_Motor(void) {
                 break;
             }
 
-            // Si es la misma tecla, avanzamos el ciclo SMS
             m = maxClicks(teclaPendiente);
             if (m > 1) {
                 numClicksSMS = (numClicksSMS + 1) % m;
                 TI_ResetTics(timerSMS);
                 primerCiclo = 1;
             } else {
-                // para 1, * y # no hay ciclo, se queda pendiente igualmente
-                // y se enviará por timeout o al cambiar de tecla
                 TI_ResetTics(timerSMS);
                 primerCiclo = 1;
             }

@@ -17,19 +17,47 @@
 #define MSG_CLOSE_BOTH  "> LSBank - Close both doors\r\n"
 
 void SIO_Init(void);
+    // Pre: haver cridat aquesta funció abans de qualsevol altra del TAD.
+    // Post: Constructor del TAD SERIAL. Inicialitza la UART i deixa el mòdul en repòs.
+
 void SIO_Motor(void);
+    // Pre: Cal cridar aquesta funció periòdicament per gestionar l'enviament i la captura de dades.
+    // Post: Executa el motor intern del TAD SERIAL.
 
 void SIO_sendChar(unsigned char c);
+    // Pre: El TAD ha estat inicialitzat amb SIO_Init.
+    // Post: Si el mòdul no està ocupat, comença l'enviament del caràcter 'c'.
+
 void SIO_sendString(const char *str);
-
-void SIO_startPin(void);            
-unsigned char SIO_pinReady(void);   
-char* SIO_getPIN(void);             
-
-void SIO_startCapture(void);            
-unsigned char SIO_captureReady(void);   
-char* SIO_getCapture(void);             
+    // Pre: El TAD ha estat inicialitzat amb SIO_Init.
+    // Post: Si el mòdul no està ocupat, comença l'enviament de la cadena.
 
 unsigned char SIO_isBusy(void);
+    // Pre: El TAD ha estat inicialitzat amb SIO_Init.
+    // Post: Retorna cert si el mòdul està ocupat enviant o capturant dades, i fals altrament.
+
+void SIO_startPin(void);
+    // Pre: El TAD ha estat inicialitzat amb SIO_Init.
+    // Post: Inicia la captura d'un PIN de 7 caràcters enviats amb SIO_sendChar.
+
+unsigned char SIO_pinReady(void);
+    // Pre: El TAD ha estat inicialitzat amb SIO_Init.
+    // Post: Retorna cert si s'ha completat la captura del PIN, i fals altrament.
+
+const char* SIO_getPIN(void);
+    // Pre: SIO_pinReady ha retornat cert.
+    // Post: Retorna un punter al buffer intern que conté el PIN capturat acabat en '\0'.
+
+void SIO_startCapture(void);
+    // Pre: El TAD ha estat inicialitzat amb SIO_Init.
+    // Post: Inicia la captura d'una línia rebuda per sèrie fins a '\r' o '\n'.
+
+unsigned char SIO_captureReady(void);
+    // Pre: El TAD ha estat inicialitzat amb SIO_Init.
+    // Post: Retorna cert si s'ha completat la captura d'una línia, i fals altrament.
+
+const char* SIO_getCapture(void);
+    // Pre: SIO_captureReady ha retornat cert.
+    // Post: Retorna un punter al buffer intern que conté la cadena capturada acabada en '\0'.
 
 #endif

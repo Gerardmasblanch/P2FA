@@ -4,74 +4,59 @@
 #include <xc.h>
 #include "pic18f4321.h"
 
-// Hall en RC1
-#define HALL_IN          PORTCbits.RC1
-#define TRIS_HALL_IN     TRISCbits.TRISC1
+#define T_REBOTS         5 // en tics, 5 tics = 10 ms 
 
-// Sin imán = 1, con imán = 0
-#define HALL_ACTIU       0
-
-// Tiempo antirrebote (tics del TAD_TIMER)
-#define T_REBOTS         5
-
-static unsigned char estat = 1;      // empieza en 1 (sin imán)
+static unsigned char estat;      
 static unsigned char timerRebots;
 
 void HALL_Init(void)
 {
-    TRIS_HALL_IN = 1;               // RC1 entrada
-
+    TRISCbits.TRISC1 = 1;              
     TI_NewTimer(&timerRebots);
     TI_ResetTics(timerRebots);
-
-    estat = 1;                      // sin imán
+    estat = 0;                    
 }
 
 void Motor_Hall(void)
 {
-    switch (estat)
-    {
-        case 1: // estable en 1, esperando que aparezca imán (baje a 0)
-            if (HALL_IN == HALL_ACTIU) {
+    switch (estat){
+        case 0: 
+            if (PORTCbits.RC1 == 0) {
                 TI_ResetTics(timerRebots);
-                estat = 2;
+                estat = 1;
             }
             break;
 
-        case 2: // antirrebote al detectar 0
+        case 1: 
             if (TI_GetTics(timerRebots) >= T_REBOTS) {
-                if (HALL_IN == HALL_ACTIU) {
-                    // detección confirmada (estable en 0)
-                    estat = 3;
+                if (PORTCbits.RC1 == 0) {
+                    estat = 2;
                 } else {
-                    // fue rebote, volvemos a esperar
                     estat = 1;
                 }
             }
             break;
 
-        case 3: // estamos en 0 (imán presente), esperando que se quite (vuelva a 1)
-            if (HALL_IN != HALL_ACTIU) {
+        case 2: 
+            if (PORTCbits.RC1 != 0) {
                 TI_ResetTics(timerRebots);
-                estat = 4;
+                estat = 3;
             }
             break;
 
-        case 4: // antirrebote al soltar (volver a 1) y generar evento
+        case 3: 
             if (TI_GetTics(timerRebots) >= T_REBOTS) {
-                if (HALL_IN != HALL_ACTIU) {
-                    // soltado confirmado (estable en 1) -> evento único
+                if (PORTCbits.RC1 != 0) {
                     Hall_Ences(1);
-                    estat = 1;
+                    estat = 0;
                 } else {
-                    // rebote, sigue en 0 realmente
-                    estat = 3;
+                    estat = 2;
                 }
             }
             break;
 
         default:
-            estat = 1;
+            estat = 0;
             break;
     }
 }

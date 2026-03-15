@@ -2,10 +2,10 @@
 #include "pic18f4321.h"
 #include <xc.h>
 
-// fico 100 nivells de intensitat 
-// 60 000 / 100 = 600 tics per nivell
-#define TEMPS_NIVELL 4000  // <-- 60 000 / 25 = 2400 tics 
-#define NIVELLS 15         
+// fico 12 nivells de intensitat 
+// 60 000 / 12 = 5000 tics per nivell
+#define TEMPS_NIVELL 5000  // <-- 60 000 / 12 = 5000 tics 
+#define NIVELLS 12         
 
 static unsigned char timerIntesity;
 static unsigned char timerOSC;
@@ -62,8 +62,8 @@ void Intesity_motor(void) {
             if (TI_GetTics(timerIntesity) >= TEMPS_NIVELL) {  //cada 2400
                 TI_ResetTics(timerIntesity);
                 
-                if (nivellIntesity < NIVELLS) {  // un dels 25
-                    nivellIntesity++;    // 2400 * 60 = 60 000 tick = 120 000 ms = 2 m
+                if (nivellIntesity < NIVELLS) {  // un dels 12
+                    nivellIntesity++;    // 5000 * 60 = 60 000 tick = 120 000 ms = 2 m
                     resetOscilacio = 1;
                     TI_ResetTics(timerOSC);
                 } else {
@@ -80,7 +80,7 @@ void Intesity_motor(void) {
 
             if (oscilacioIntesity >= NIVELLS || resetOscilacio) { 
                 // Fara la oscilacio depen dels nivells assignats
-                // 2400, el primer sera 1000000.. 2400 huecos
+                // 5000, el primer sera 1000000.. 5000 huecos, 110000..
                 oscilacioIntesity = 0; 
                 resetOscilacio = 0;
             }
@@ -102,6 +102,7 @@ void Intesity_motor(void) {
              break;
     }
 }
+
 
 
 
